@@ -1,0 +1,11 @@
+﻿  client_main.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\shared\minwindef.h(130,1): warning C4005: 'APIENTRY': macro redefinition
+C:\Users\ramne\Desktop\sil-project\CheatDefender\externals\GLFW\include\GLFW\glfw3.h(123): message : see previous definition of 'APIENTRY'
+C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\CheatDefender\client\client_main.cpp(134,15): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+  Network.cpp
+C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\CheatDefender\net\Network.cpp(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\CheatDefender\net\Network.cpp(52,21): warning C4101: 'si_other': unreferenced local variable
+  Generating Code...
+C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\CheatDefender\net\Network.cpp(14): warning C4715: 'Network::send': not all control paths return a value
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  CheatDefender.vcxproj -> C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\Debug\CheatDefender.exe
