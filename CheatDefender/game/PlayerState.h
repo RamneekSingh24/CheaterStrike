@@ -1,5 +1,5 @@
 #pragma once
-#include <glm/glm.hpp>
+#include <stdint.h>
 #include "Keys.h"
 #define MAX_PLAYERS 10
 #define UNKNOWN_ID -1
@@ -14,7 +14,7 @@ struct PlayerState {
 		for (int i = 0; i < NUM_KEYS; i++) {
 			last_input[i] = false;
 		}
-		x = 0.0f, y = 0.0f, z = 0.0f;
+		x = -100.0f, y = -100.0f, z = -100.0f;
 		clientID = UNKNOWN_ID;
 	}
 

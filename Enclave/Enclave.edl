@@ -1,0 +1,13 @@
+enclave {
+
+    trusted {
+        /* define ECALLs here. */
+        public void init_ecc();
+        public void gen_keys([out, count=64] unsigned char* pub_key);
+        public void gen_secret([in, count=64] unsigned char* remote_pub_key,[out, count=32] unsigned char* shared_key); 
+        /* For now we give out the shared key from the enclave to test */
+    };
+
+};
+
+

@@ -1,0 +1,5 @@
+﻿  Network.cpp
+C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\Server\Network.cpp(1,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Source.cpp
+  Generating Code...
+  Server.vcxproj -> C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\x64\Debug\Server.exe

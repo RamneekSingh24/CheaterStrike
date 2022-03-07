@@ -1,0 +1,2 @@
+^C:\USERS\RAMNE\DESKTOP\SIL-PROJECT\CHEATDEFENDER\CHEATDEFENDER\ENCLAVE\ENCLAVE.EDL
+"C:\Program Files (x86)\Intel\IntelSGXSDK\bin\win32\release\sgx_edger8r.exe" --trusted "C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\Enclave\Enclave.edl" --search-path "C:\Program Files (x86)\Intel\IntelSGXSDK\include"

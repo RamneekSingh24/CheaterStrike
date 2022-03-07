@@ -15,12 +15,11 @@ class Network
 public:
 	int send(Message msg);
 	int recv(Message* msg);
-	
+
 	int init(std::string serverIP, int serverPort);
 
 private:
 	SOCKET sock;
-	sockaddr_in server_addr;
-	
-};
+	SOCKADDR_IN  server_addr;
 
+};

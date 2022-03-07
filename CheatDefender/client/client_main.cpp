@@ -1,4 +1,3 @@
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stdio.h>
 #include <string.h>
@@ -9,10 +8,10 @@
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
 
+
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
-
 
 
 #include "Window.h"
@@ -26,10 +25,10 @@
 #include "../game/Message.h"
 #include "../game/PlayerState.h"
 #include "Predictor.h"
+#include "../EnclaveWrapper.h"  /* TODO: in final build move all enclave files to ./enclave folder */
 
-
+#include <Windows.h>   /* Do not move this to the top */
 /*
-
 			y
 			|
 			|
@@ -75,30 +74,54 @@ void CreateShaders()
 int main()
 {
 
-
-
 	Network net;
-	
-	net.init("127.0.0.1", 6969);
 
+	net.init("127.0.0.1", 8866);
 
+	/* Send join request to server and get back client ID */
 	Message msg_join;
+
 	msg_join.msgType = CL_SV_MSG_JOIN;
 	msg_join.clientId = UNKNOWN_ID;
-	
+	msg_join.clientId = 5;
 	/* TODO: Error Check */
 	net.send(msg_join);
 
-	Message msg;
-	while (!net.recv(&msg)) {
-		/* Wait for server's response */
+	Message msg = { 0 };
+	
+
+	while (net.recv(&msg) <= 0) {
+		
 	}
 
-	for (int i = 0; i < MAX_PLAYERS; i++) {
-		local_players_state[i] = msg.state[i];
+	local_state.clientID = msg.clientId;
+	local_state.x = -0.0f, local_state.y = 0.0f, local_state.z = 0.0f;
+
+
+
+	/* Initilize Enclave and Derive Session Key */
+
+	Message msgKey = { 0 };
+	EnclaveWrapper enc_w;
+	enc_w.init(msgKey.ecc_pub_key);
+
+	msgKey.msgType = KEY_EXCHANGE;
+	msgKey.clientId = local_state.clientID;
+
+	net.send(msgKey);
+
+	msgKey = { 0 };
+
+	while (net.recv(&msgKey) <= 0) {
+
 	}
 
-	local_state = msg.state[msg.clientId];
+	enc_w.deriveSharedKey(msgKey.ecc_pub_key);
+
+
+
+	/* Start up game cleint window */
+
 
 
 	mainWindow = Window(1366, 768); // 1280, 1024 or 1024, 768
@@ -106,7 +129,7 @@ int main()
 
 	CreateShaders();
 
-	camera = Camera(glm::vec3(1.0f, 0.0f, 6.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
+	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
 
 
 	map.init();
@@ -116,7 +139,6 @@ int main()
 
 
 
-	
 	for (auto& model : players) {
 		model.LoadModel("graphics/Models/characterlowpoly2.obj");
 	}
@@ -127,9 +149,6 @@ int main()
 	{
 
 		// TODO: Loop according to TickRate
-
-		
-
 
 		GLfloat now = glfwGetTime(); // SDL_GetPerformanceCounter();
 		deltaTime = now - lastTime; // (now - lastTime)*1000/SDL_GetPerformanceFrequency();
@@ -146,6 +165,7 @@ int main()
 
 		/* Prepare Message to send to server */
 		glm::vec3 myPos = camera.getCameraPosition();
+		local_state.x = myPos.x + 0.1f, local_state.y = myPos.y + 0.1f, local_state.z = myPos.z + 0.1f;
 		for (int i = 0; i < NUM_KEYS; i++) {
 			local_state.last_input[i] = 0;
 		}
@@ -169,7 +189,7 @@ int main()
 		{
 			local_state.last_input[KEY_D] = 1;
 		}
-	
+
 		local_players_state[local_state.clientID] = local_state;
 
 		Message msg;
@@ -182,19 +202,18 @@ int main()
 
 		int bytes_recv = net.recv(&msg);
 
-		if (bytes_recv == 0) {
+		if (bytes_recv <= 0) {
 			Prediction::updateState(local_players_state, nullptr, &local_state);
 		}
 		else {
 			Prediction::updateState(local_players_state, &msg, &local_state);
 		}
+
+		//std::cout << "Received state from server";
 		
+		/*	player.keyControl(mainWindow.getsKeys(), deltaTime);*/
 
-
-
-	/*	player.keyControl(mainWindow.getsKeys(), deltaTime);*/
-
-		// Clear the window
+			// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -229,16 +248,10 @@ int main()
 		glUseProgram(0);
 
 		mainWindow.swapBuffers();
+
+		Sleep(50);
+
 	}
-
-
-
-
-
-
-
-
-
 
 
 
@@ -246,7 +259,6 @@ int main()
 }
 
 /*
-
 			y
 			|
 			|
@@ -257,5 +269,3 @@ int main()
 		  /
 		z
 */
-
-
