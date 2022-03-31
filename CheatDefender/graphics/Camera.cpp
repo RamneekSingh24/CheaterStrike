@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include <iostream>
 
 Camera::Camera() {}
 
@@ -32,17 +33,22 @@ void Camera::keyControl(bool* keys, GLfloat deltaTime)
 
 	if (keys[GLFW_KEY_A])
 	{
-		position -= glm::vec3(-1.0f, 0.0f, 0.0f) * velocity;
+		position += glm::vec3(-1.0f, 0.0f, 0.0f) * velocity;
 	}
 
 	if (keys[GLFW_KEY_D])
 	{
-		position += glm::vec3(-1.0f, 0.0f, 0.0f) * velocity;
+		position -= glm::vec3(-1.0f, 0.0f, 0.0f) * velocity;
 	}
 }
 
 void Camera::mouseControl(GLfloat xChange, GLfloat yChange)
 {
+
+	//std::cout << xChange << " "  << yChange << std::endl;
+
+	if (abs(xChange) >= 100.0f || abs(yChange >= 100.0f)) return;
+
 	xChange *= turnSpeed;
 	yChange *= turnSpeed;
 
@@ -85,6 +91,9 @@ void Camera::update()
 
 	right = glm::normalize(glm::cross(front, worldUp));
 	up = glm::normalize(glm::cross(right, front));
+
+	// std::cout << front.x << " " << front.y << " " << front.z << std::endl;
+
 }
 
 

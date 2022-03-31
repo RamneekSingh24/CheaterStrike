@@ -2,7 +2,12 @@
 #include "KeyExchange.h"
 #include <iostream>
 
+
+bool encryptionOn = false;
+
+// std::string serverIP = "10.184.58.161";    
 std::string serverIP = "127.0.0.1";
+// std::string serverIP = "192.168.43.163";
 int serverPort = 8866;
 
 PlayerState players[MAX_PLAYERS];
@@ -12,15 +17,16 @@ int num_players_joined = 0;
 
 
 int main() {
+	
 
 	Network net;
-	net.init(serverIP, serverPort);
+	net.init(serverIP, serverPort, encryptionOn);
 
 	int bytes_recv;
 	Message msg_recv, msg_send;
 	std::string recv_ip;
 	int recv_port;
-
+			
 	while (true) {
 		bytes_recv = net.recv(&msg_recv, recv_ip, recv_port);
 		if (bytes_recv <= 0) continue;
@@ -29,7 +35,7 @@ int main() {
 				msg_send.clientId = num_players_joined++;
 				msg_send.msgType = SV_CL_MSG_JOIN_OK;
 				std::cout << "player joined " << recv_ip << " " << recv_port << std::endl;
-				net.send(msg_send, recv_ip, recv_port);
+				net.send(msg_send, recv_ip, recv_port, keyExchange[msg_send.clientId].session_key);
 				break;
 			case CL_SV_MSG_QUIT:
 				players[msg_recv.clientId].x = -100;
@@ -44,7 +50,7 @@ int main() {
 				for (int i = 0; i < MAX_PLAYERS; i++) {
 					msg_send.state[i] = players[i];
 				}
-				net.send(msg_send, recv_ip, recv_port);
+				net.send(msg_send, recv_ip, recv_port, keyExchange[msg_send.clientId].session_key);
 				break;
 			case KEY_EXCHANGE:
 				KeyExchange& keyEx = keyExchange[msg_recv.clientId];
@@ -53,7 +59,7 @@ int main() {
 				msg_send.msgType = KEY_EXCHANGE;
 				memcpy(msg_send.ecc_pub_key, keyEx.get_public_key(), sizeof(sample_ec256_public_t));
 				msg_send.clientId = msg_recv.clientId;
-				net.send(msg_send, recv_ip, recv_port);
+				net.send(msg_send, recv_ip, recv_port, keyExchange[msg_send.clientId].session_key);
 
 		}
 

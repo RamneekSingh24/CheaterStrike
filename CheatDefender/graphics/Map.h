@@ -12,7 +12,7 @@ class Map
 public:
 	void spawnPlayer(glm::vec3 spawn_point);
 	void init();
-	void renderMap(GLuint uniformModel);
+	void renderMap(GLuint uniformModel, bool wallHackOn);
 
 private:
 	Mesh* floor;

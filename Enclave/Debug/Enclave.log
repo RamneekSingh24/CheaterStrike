@@ -1,11 +1,13 @@
 ﻿  Creating proxy/bridge routines
   Enclave.cpp
+  aes.cpp
+  cmac.cpp
+  Generating Code...
   Enclave_t.c
      Creating library C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\Debug\Enclave.lib and object C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\Debug\Enclave.exp
   Enclave.vcxproj -> C:\Users\ramne\Desktop\sil-project\CheatDefender\CheatDefender\Debug\Enclave.dll
   sign the enclave
-  The required memory is 0x1ca000.
-  Succeed.
+  The required memory is 0x1cc000.
   <EnclaveConfiguration>
       <ProdID>0</ProdID>
       <ISVSVN>0</ISVSVN>
@@ -17,3 +19,4 @@
       <MiscSelect>0</MiscSelect>
       <MiscMask>0xFFFFFFFF</MiscMask>
   </EnclaveConfiguration>
+  Succeed.

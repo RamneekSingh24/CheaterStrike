@@ -89,6 +89,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\ramne\Desktop\sil-project\CheatDefender\externals\sample_libcrypto;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,6 +122,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\ramne\Desktop\sil-project\CheatDefender\externals\sample_libcrypto;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,11 +149,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aes.cpp" />
     <ClCompile Include="KeyExchange.cpp" />
     <ClCompile Include="Network.cpp" />
     <ClCompile Include="server_main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aes.h" />
     <ClInclude Include="KeyExchange.h" />
     <ClInclude Include="Network.h" />
   </ItemGroup>

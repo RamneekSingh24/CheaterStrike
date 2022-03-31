@@ -463,9 +463,13 @@
   <ItemGroup>
     <ClCompile Include="$(projectname).cpp" />
     <ClCompile Include="$(projectname)_t.c" />
+    <ClCompile Include="aes.cpp" />
+    <ClCompile Include="cmac.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(projectname)_t.h" />
+    <ClInclude Include="aes.h" />
+    <ClInclude Include="cmac.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="$(projectname).edl">

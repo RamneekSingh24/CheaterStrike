@@ -1,7 +1,7 @@
 #include "Network.h"
 #include <iostream>
 
-int Network::send(Message msg, std::string clientIP, int clientPort)
+int Network::send(Message msg, std::string clientIP, int clientPort, unsigned char* shared_secret)
 {
 
 	sockaddr_in recvr_addr;
@@ -10,9 +10,43 @@ int Network::send(Message msg, std::string clientIP, int clientPort)
 	recvr_addr.sin_port = htons(clientPort);
 	recvr_addr.sin_addr.S_un.S_addr = inet_addr(clientIP.c_str());
 
-	// TODO Encrypt buf
+	std::string addr = clientIP + std::to_string(clientPort);
+
+	Record record;
+	record.seq_no = ++send_seq_no[clientIP + std::to_string(clientPort)];   // TODO: Can correctly assign seq_no 
+	record.msg = msg;														// according to AES_BLOCK_SIZE
+																			// But this works for now.
+				
+
+	
+	if (msg.msgType == SV_CL_MSG_ALL_STATE) {   // Only need to encrypt the all state message. 
+		record.encrypted = encryptionOn ? ENCRYPTED : NOT_ENCRYPTED;
+
+		unsigned char* iv = (shared_secret + 16);
+
+		// Init Aes context if not present
+		if (encryptionOn) {
+			if (aes_ctxs.find(addr) == aes_ctxs.end()) {
+				AES_init_ctx_iv(&aes_ctxs[addr],
+					reinterpret_cast<uint8_t*>(shared_secret),
+					reinterpret_cast<uint8_t*>(iv));
+			}
+
+			// Encrypt Message
+
+			AES_CTR_xcrypt_buffer(&aes_ctxs[addr],
+				reinterpret_cast<uint8_t*>(&record.msg),
+				sizeof(Message),
+				record.seq_no);
+		}
+	}
+	else {
+		record.encrypted = NOT_ENCRYPTED;
+	}
+
+
 	char message[BUFLEN];
-	memcpy(message, &msg, sizeof(msg));
+	memcpy(message, &record, sizeof(Record));
 
 	int flags = 0;
 	if (sendto(sock, message, sizeof(message), flags, (SOCKADDR*)&recvr_addr, sizeof(recvr_addr)) == SOCKET_ERROR)
@@ -21,7 +55,6 @@ int Network::send(Message msg, std::string clientIP, int clientPort)
 
 		return EXIT_FAILURE;
 	}
-
 
 
 	return 0;
@@ -44,7 +77,6 @@ int Network::recv(Message* msg, std::string &clientIP, int &clientPort) {
 		return 0;
 	}
 
-	// TODO: Decrypt buf
 	memcpy(msg, buf, sizeof(msg));
 	char fromIP[INET_ADDRSTRLEN];
 	inet_ntop(AF_INET, &(from.sin_addr), fromIP, INET_ADDRSTRLEN);
@@ -54,12 +86,12 @@ int Network::recv(Message* msg, std::string &clientIP, int &clientPort) {
 	return bytes_received;
 }
 
-int Network::init(std::string myIP, int myPort)
+int Network::init(std::string myIP, int myPort, bool encryption)
 {
 
 
-	// TODO: Exchange Ecnryption keys and save in enclave
-
+	
+	encryptionOn = encryption;
 
 
 	WSADATA wsa;
@@ -93,4 +125,7 @@ int Network::init(std::string myIP, int myPort)
 
 	return 0;
 }
+
+
+
 

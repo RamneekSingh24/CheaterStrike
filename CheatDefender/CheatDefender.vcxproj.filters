@@ -13,7 +13,7 @@
       <UniqueIdentifier>{929b9ef0-c1b8-4a21-94a3-a1580664047b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Generated Files">
-      <UniqueIdentifier>{9c50e640-2576-408c-ae10-d0c2ca8760c9}</UniqueIdentifier>
+      <UniqueIdentifier>{ba1b9cf8-cd58-4d77-91db-d577c9e8c769}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +49,9 @@
     </ClCompile>
     <ClCompile Include="Enclave_u.c">
       <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="client\Mouse.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -97,8 +100,17 @@
     <ClInclude Include="EnclaveWrapper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="game\Record.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="Enclave_u.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="client\Mouse.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

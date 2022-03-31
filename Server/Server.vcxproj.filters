@@ -24,12 +24,18 @@
     <ClCompile Include="KeyExchange.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="aes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="KeyExchange.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="aes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

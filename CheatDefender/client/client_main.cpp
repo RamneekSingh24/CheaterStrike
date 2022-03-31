@@ -15,6 +15,7 @@
 
 
 #include "Window.h"
+#include "Mouse.h"
 #include "../graphics/Mesh.h"
 #include "../graphics/Shader.h"
 #include "../graphics/Camera.h"
@@ -25,6 +26,7 @@
 #include "../game/Message.h"
 #include "../game/PlayerState.h"
 #include "Predictor.h"
+#include "../fps.h"
 #include "../EnclaveWrapper.h"  /* TODO: in final build move all enclave files to ./enclave folder */
 
 #include <Windows.h>   /* Do not move this to the top */
@@ -71,12 +73,32 @@ void CreateShaders()
 	shaderList.push_back(*shader1);
 }
 
+
+
 int main()
 {
 
-	Network net;
 
-	net.init("127.0.0.1", 8866);
+
+	/* Initialize and start Enclave */
+	
+	Message msgKey = { 0 };
+	EnclaveWrapper enc_w;
+	enc_w.init(msgKey.ecc_pub_key);
+
+
+
+
+	unsigned char enclave_pub_key[64];
+	memcpy(enclave_pub_key, msgKey.ecc_pub_key, 64);
+
+
+	/* Initialize network interface */
+	Network net;
+	//net.init("10.184.14.122", 8866, &enc_w);
+	//net.init("192.168.43.163", 8866, &enc_w);
+	//net.init("192.168.43.163", 8866, &enc_w);
+	net.init("127.0.0.1", 8866, &enc_w);
 
 	/* Send join request to server and get back client ID */
 	Message msg_join;
@@ -95,16 +117,11 @@ int main()
 	}
 
 	local_state.clientID = msg.clientId;
-	local_state.x = -0.0f, local_state.y = 0.0f, local_state.z = 0.0f;
+	local_state.x = 0.0f, local_state.y = 0.0f, local_state.z = 0.0f;
 
 
 
-	/* Initilize Enclave and Derive Session Key */
-
-	Message msgKey = { 0 };
-	EnclaveWrapper enc_w;
-	enc_w.init(msgKey.ecc_pub_key);
-
+	/* Derive Session Key */
 	msgKey.msgType = KEY_EXCHANGE;
 	msgKey.clientId = local_state.clientID;
 
@@ -115,43 +132,51 @@ int main()
 	while (net.recv(&msgKey) <= 0) {
 
 	}
-
 	enc_w.deriveSharedKey(msgKey.ecc_pub_key);
 
 
 
+
+	int windowWidth = 1366, windowHeight = 768;
 	/* Start up game cleint window */
-
-
-
-	mainWindow = Window(1366, 768); // 1280, 1024 or 1024, 768
+	mainWindow = Window(windowWidth, windowHeight); // 1280, 1024 or 1024, 768
 	mainWindow.Initialise();
 
 	CreateShaders();
 
 	camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
 
-
 	map.init();
 
 	GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f);
 
-
-
 	for (auto& model : players) {
 		model.LoadModel("graphics/Models/characterlowpoly2.obj");
 	}
 
+	Fps fps;
 
+	Mouse mouse;
+	mouse.init(true, &enc_w);
+
+	
+	// Game Loop
+
+	bool wallHackOn = false;
+	
+	int console_out_len = 0;
 
 	while (!mainWindow.getShouldClose())
 	{
 
-		// TODO: Loop according to TickRate
+
+		//glEnable(GL_DEPTH_TEST);
+
+		fps.update();
 
 		GLfloat now = glfwGetTime(); // SDL_GetPerformanceCounter();
-		deltaTime = now - lastTime; // (now - lastTime)*1000/SDL_GetPerformanceFrequency();
+		deltaTime = now - lastTime;  // (now - lastTime)*1000/SDL_GetPerformanceFrequency();
 		lastTime = now;
 
 		// Get + Handle User Input
@@ -159,8 +184,16 @@ int main()
 
 		bool* keys = mainWindow.getsKeys();
 
+		if (keys[GLFW_KEY_CAPS_LOCK]) {
+			wallHackOn = !wallHackOn;
+		}
+
+
+
 		camera.keyControl(keys, deltaTime);
-		camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+		std::pair<float, float> inp = mouse.getXYChangeInput();
+		camera.mouseControl(inp.first, inp.second);
+		//camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
 
 
 		/* Prepare Message to send to server */
@@ -213,7 +246,7 @@ int main()
 		
 		/*	player.keyControl(mainWindow.getsKeys(), deltaTime);*/
 
-			// Clear the window
+		// Clear the window
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -228,7 +261,7 @@ int main()
 		glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
 
-		map.renderMap(uniformModel);
+		map.renderMap(uniformModel, wallHackOn);
 
 		float dl = 0.0;
 
@@ -249,7 +282,23 @@ int main()
 
 		mainWindow.swapBuffers();
 
-		Sleep(50);
+		
+
+		std::string console_out = "Fps: " + std::to_string(fps.get());
+
+		for (int i = 0; i < console_out_len; i++) {
+			std::cout << "\b \b";
+		}
+
+		std::cout << console_out;
+		
+		console_out_len = console_out.length();
+
+
+
+
+
+		//glDisable(GL_DEPTH_TEST);
 
 	}
 

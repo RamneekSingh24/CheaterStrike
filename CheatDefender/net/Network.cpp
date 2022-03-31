@@ -1,5 +1,6 @@
 #include "Network.h";
 #include <iostream>
+
 int Network::send(Message msg)
 {
 
@@ -22,34 +23,35 @@ int Network::send(Message msg)
 
 int Network::recv(Message* msg) {
 
-
-
 	char buffer[BUFLEN];
 	int flags = 0;
 	SOCKADDR_IN from;
 	int from_size = sizeof(from);
 	int bytes_received = recvfrom(sock, buffer, sizeof(buffer), flags, (SOCKADDR*)&from, &from_size);
 
-	memcpy(msg, buffer, sizeof(Message));
+	Record record;
+	memcpy(&record, buffer, sizeof(Record));
 
-	//if (bytes_received == SOCKET_ERROR) {
-	//	return SOCKET_ERROR;
-	//}
-	//if (bytes_received == 0) {
-	//	return 0;
-	//}
-	//if (from.sin_addr.S_un.S_addr == server_addr.sin_addr.S_un.S_addr) {
-	//	// TODO: Decrypt buf
-	//	memcpy(msg, buffer, sizeof(msg));
-	//}
+
+	if (record.encrypted == NOT_ENCRYPTED) {
+		memcpy(msg, &record.msg, sizeof(Message));
+	}
+	
+	else {
+			int ret = enc_w->decryptRecord(
+			reinterpret_cast<unsigned char*> (&record), sizeof(Record),
+			reinterpret_cast<unsigned char*> (msg), sizeof(Message));
+			if (ret != 0) {
+				return ret;
+			}
+	}
+
+
 	return bytes_received;
 }
 
-int Network::init(std::string serverIP, int serverPort)
+int Network::init(std::string serverIP, int serverPort, EnclaveWrapper* enc_w)
 {
-
-
-	// TODO: Exchange Ecnryption keys and save in enclave
 
 
 
@@ -84,6 +86,8 @@ int Network::init(std::string serverIP, int serverPort)
 	server_addr.sin_family = AF_INET;
 	server_addr.sin_port = htons(serverPort);
 	server_addr.sin_addr.S_un.S_addr = inet_addr(serverIP.c_str());
+
+	this->enc_w = enc_w;
 
 
 	return 0;

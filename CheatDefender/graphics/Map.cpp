@@ -25,10 +25,10 @@ void Map::init()
 			3.0f, -2.0f, 0.3f,		0.1f, 0.0f,		0.0f, 0.0f, 0.0f,
 			-3.0f, -2.0f, 0.3f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
 
-			-3.0f, 2.0f, -0.3f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-			3.0f,  2.0f, -0.3f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
-			3.0f,  2.0f, 0.3f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
-			-3.0f, 2.0f, 0.3f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+			-3.0f, 10.0f, -0.3f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+			3.0f,  10.0f, -0.3f,		0.0f, 0.0f,		0.0f, 0.0f, 0.0f,
+			3.0f,  10.0f, 0.3f,		1.0f, 1.0f,		0.0f, 0.0f, 0.0f,
+			-3.0f, 10.0f, 0.3f,		0.0f, 1.0f,		0.0f, 0.0f, 0.0f,
 
 	};
 
@@ -45,6 +45,8 @@ void Map::init()
 		10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
 	};
 
+
+
 	wall = new Mesh();
 	wall->CreateMesh(wallVertices, wallIndices, 64, 24);
 	floor = new Mesh();
@@ -59,7 +61,7 @@ void Map::init()
 
 }
 
-void Map::renderMap(GLuint uniformModel)
+void Map::renderMap(GLuint uniformModel, bool wallHackOn)
 {
 
 	glm::mat4 model;
@@ -78,8 +80,14 @@ void Map::renderMap(GLuint uniformModel)
 
 	glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
 
-	brickTexture.UseTexture();
-	wall->RenderMesh();
+	if (!wallHackOn) {
+		brickTexture.UseTexture();
+		wall->RenderMesh();
+	}
+
+
+
+
 
 
 }

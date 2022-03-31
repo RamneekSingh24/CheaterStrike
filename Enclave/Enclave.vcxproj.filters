@@ -24,10 +24,22 @@
     <ClCompile Include="$(projectname).cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="aes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cmac.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(projectname)_t.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="aes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cmac.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

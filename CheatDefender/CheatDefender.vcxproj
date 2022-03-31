@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client\client_main.cpp" />
+    <ClCompile Include="client\Mouse.cpp" />
     <ClCompile Include="client\Window.cpp" />
     <ClCompile Include="EnclaveWrapper.cpp" />
     <ClCompile Include="Enclave_u.c">
@@ -65,13 +66,16 @@
     <ClCompile Include="net\Network.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="client\Mouse.h" />
     <ClInclude Include="client\Predictor.h" />
     <ClInclude Include="client\Window.h" />
     <ClInclude Include="EnclaveWrapper.h" />
     <ClInclude Include="Enclave_u.h" />
+    <ClInclude Include="fps.h" />
     <ClInclude Include="game\Keys.h" />
     <ClInclude Include="game\Message.h" />
     <ClInclude Include="game\PlayerState.h" />
+    <ClInclude Include="game\Record.h" />
     <ClInclude Include="graphics\Camera.h" />
     <ClInclude Include="graphics\Graphics.h" />
     <ClInclude Include="graphics\Map.h" />
